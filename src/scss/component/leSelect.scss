@@ -1,0 +1,73 @@
+.select {
+  width: 240px;
+  height: 36px;
+  line-height: 36px;
+  position: relative;
+
+  .selected {
+    height: 100%;
+    font-size: 14px;
+    border: 1px solid #ecedf1;
+    border-radius: 3px;
+    padding-left: 12px;
+    cursor: pointer;
+  }
+
+  .icon-arrow-down {
+    display: block;
+    width: 12px;
+    height: 12px;
+    background: url('../../img/arrow_down.png') center/100% auto no-repeat;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translate(0, -50%);
+    cursor: pointer;
+  }
+
+  .options {
+    position: absolute;
+    box-sizing: border-box;
+    top: calc(100% + 1);
+    width: 100%;
+    border: 1px solid #ecedf1;
+    border-top-color: transparent;
+    background: #fff;
+
+    .filter {
+      position: relative;
+      line-height: 1;
+      input {
+        width: 100%;
+        height: 32px;
+        line-height: 32px;
+        box-sizing: border-box;
+        border: solid 1px #000;
+      }
+
+      .icon-search {
+        display: block;
+        width: 12px;
+        height: 12px;
+        background: url('../../img/arrow_down.png') center/100% auto no-repeat;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translate(0, -50%);
+      }
+    }
+
+    ul {
+      border-top: 1px solid #ecedf1;
+      padding: 8px 0;
+      li {
+        line-height: 20px;
+        padding-left: 12px;
+        &:hover {
+          background: #2c91d9;
+          color: #fff;
+        }
+      }
+    }
+  }
+}

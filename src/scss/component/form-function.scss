@@ -1,0 +1,117 @@
+.form-function {
+	padding: 30px 20px 10px;
+
+	.form-group {
+		width: 100%;
+		font-size: 12px;
+		margin-bottom: 10px;
+
+		&::after {
+			display: block;
+			content: "";
+			clear: both;
+		}
+
+		.form-text {
+			width: 24%;
+			float: left;
+			line-height: 36px;
+			text-align: right;
+
+			.require {
+				color: #ec5453;
+			}
+		}
+
+		.form-value {
+			width: 76%;
+			float: left;
+			line-height: 36px;
+			padding-left: 20px;
+			box-sizing: border-box;
+
+			.icon-tip {
+				display: inline-block;
+				background: url('../../img/tip.png') center/cover no-repeat;
+				height: 16px;
+				width: 16px;
+				position: relative;
+				left: 6px;
+				top: 2px;
+
+				&:hover {
+					.tooltip {
+						display: block;
+					}
+				}
+
+				.tooltip {
+					display: none;
+					position: absolute;
+					bottom: calc(100% - 3px);
+					left: 50%;
+					transform: translate(-50%, 0);
+
+					.content {
+						padding: 6px 10px;
+						line-height: 18px;
+						background: #fef8f0;
+						border: 1px solid #f5ab4d;
+						border-radius: 3px;
+					}
+
+					&::after {
+						content: "";
+						display: block;
+						width: 0;
+						margin: 0 auto;
+						border-width: 5px;
+						border-style: solid;
+						border-color: #f5ab4d transparent transparent transparent;
+					}
+				}
+			}
+
+			.text {}
+
+			.input-text {
+				box-sizing: border-box;
+				height: 36px;
+				width: 240px;
+				&:disabled {
+					background: #eee;
+				}
+			}
+
+			.item {
+				margin-bottom: 5px;
+
+				input {
+					box-sizing: border-box;
+					height: 36px;
+					width: 190px;
+				}
+
+				>span {
+					line-height: 1;
+					margin-right: 10px;
+				}
+			}
+
+			textarea {
+				width: 300px;
+				height: 70px;
+				padding: 12px;
+			}
+
+			&.range {
+				.input-text {
+					width: 80px;
+				}
+				.spliter {
+					margin: 0 33px;
+				}
+			}
+		}
+	}
+}

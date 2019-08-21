@@ -1,0 +1,53 @@
+// $baseFontSize : 234.376 !default;
+// @function torem($value) {
+// 	@return ($value / $baseFontSize * 1rem);
+// }
+*{
+	margin: 0;
+	padding: 0;
+}
+ul,li{
+	list-style: none;
+}
+.l{
+	float: left;
+}
+.r{
+	float: right;
+}
+.clear:after{
+	content: '';
+	display: table;
+	clear: both;
+}
+.clear{
+	*zoom:1;
+}
+html, body{
+	height:100%;
+	margin: 0px;
+    padding: 0px;
+	background: #fff;
+    background-size: 100%;
+	////background:#000d1a;
+	//background: -webkit-radial-gradient(red 5%, green 15%, blue 60%); /* Safari 5.1 - 6.0 */
+	//background: -o-radial-gradient(red 5%, green 15%, blue 60%); /* Opera 11.6 - 12.0 */
+	//background: -moz-radial-gradient(red 5%, green 15%, blue 60%); /* Firefox 3.6 - 15 */
+	//background: radial-gradient(red 5%, green 15%, blue 60%); /* 标准的语法 */
+	font: 300 12px/1 'PingFang SC', 'Microsoft Yahei', 'Helvetica Neue', Helvetica, STHeitiSC-Light, Arial;
+}
+input,select,button{
+	outline: none;
+	// appearance:none;
+	// -moz-appearance:none;
+	// -webkit-appearance:none;
+}
+table{
+	width:100%;
+	text-align:center;
+	border-collapse:collapse;
+	}
+	
+	a{
+		text-decoration:none;
+	}
