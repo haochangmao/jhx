@@ -88,6 +88,10 @@ export default {
 					{
 						router : "/bannerManage",
 						title:"轮播图管理"
+					},
+					{
+						router : "/classManage",
+						title:"类别管理"
 					}
 				]
 			}],

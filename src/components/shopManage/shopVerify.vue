@@ -201,7 +201,7 @@ export default {
 		getData(){
 			var that = this;
 			util.ajax({
-				url:API_HOST+"/manager/shop/query",
+				url:API_HOST+"/manager/shopAudit/query",
 				data:that.searchData,
 				success:function(data){
 					if(data.code!=200){

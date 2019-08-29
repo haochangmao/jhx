@@ -83,6 +83,12 @@
 	top:12px;
 	left:37px;
 }
+.arrow_play{
+	border-width:10px 0 10px 16px;
+	border-color:transparent transparent transparent #fff;
+	top:6px;
+	left:10px;
+}
 .square{
 	display:block;
 	width:0;
@@ -162,6 +168,11 @@ textarea{
 		width: 240px;
 		margin-left:0px;
 		background-position: 220px 11px;
+	}
+	select.selectMid{
+		width: 140px;
+		margin-left:0px;
+		background-position: 124px 11px;
 	}
 }
 .regester_time .datepicker{

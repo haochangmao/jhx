@@ -15,6 +15,7 @@ import markRule from '../../components/userManage/markRule.vue';
 import shopLocation from '../../components/shopArea/shopLocation.vue';
 //前端管理
 import bannerManage from '../../components/frontManage/bannerManage.vue';
+import classManage from '../../components/frontManage/classManage.vue';
 export default {
     routes: [{
       path: '/',
@@ -74,6 +75,10 @@ export default {
 			{
 			  path: '/bannerManage',
 			  component: bannerManage
+			},
+			{
+			  path: '/classManage',
+			  component: classManage
 			},
       ]
     }]

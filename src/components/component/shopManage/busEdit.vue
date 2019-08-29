@@ -8,10 +8,16 @@
 		<div class="bus_edit_con">
 			<div class="bus_edit clear">
 				<ul class="l">
-					<li>
-						<div>机构用户id:</div>
+					<li v-show="dataEdit.shopId!=''">
+						<div>机构id:</div>
 						<div>
 							<input type="text" class="ipt2"  v-model="dataEdit.shopId" :readonly="dataEdit.shopId!=''">
+						</div>
+					</li>
+					<li>
+						<div>用户id:</div>
+						<div>
+							<input type="text" class="ipt2"  v-model="dataEdit.userId" :readonly="userReadonlyFlag">
 						</div>
 					</li>
 					<li>
@@ -38,12 +44,16 @@
 						<div>机构logo:</div>
 						<div class="img_con">
 							<img :src="dataEdit.logoUrl" alt="">
+							<input type="file" class="unload_img" ref="file" @change="showPic($event,'logoUrl')" @mouseenter="bgChange(0)" @mouseout="bgChange">
+							<div class="load_tip" :class="{'cur':picFlag==0,'cur1':dataEdit.logoUrl!=''}">+</div>
 						</div>
 					</li>
 					<li>
 						<div>营业执照:</div>
 						<div class="img_con">
 							<img :src="dataEdit.businessLicenseUrl" alt="">
+							<input type="file" class="unload_img" ref="file" @change="showPic($event,'businessLicenseUrl')" @mouseenter="bgChange(1)" @mouseout="bgChange">
+							<div class="load_tip" :class="{'cur':picFlag==1,'cur1':dataEdit.businessLicenseUrl!=''}">+</div>
 						</div>
 					</li>
 					<li>
@@ -82,7 +92,7 @@
 						</div>
 						<div class="select1">
 							<select name="" id="" class="selectShot" @change="getQ(dataEdit.cityId)" v-model="dataEdit.cityId">
-								<option v-show="dataEdit.cityId >0 ? true:false">市</option>
+								<!-- <option v-show="dataEdit.cityId >0 ? true:false">市</option> -->
 							    <option v-for="i in cData" :value="i.id">{{i.name}}</option>
 							</select>
 						</div>
@@ -179,8 +189,11 @@ import load from '../plugin/load.vue';
     data() {
 		return {
 			show: false,
+			picFlag:null,
+			userReadonlyFlag:false,
 			dataEdit:{
 				shopId:"",
+				userId:"",
 				shopName:"",
 				parentTypeId:"",
 				shopTypeId:"",//机构类型
@@ -232,7 +245,7 @@ import load from '../plugin/load.vue';
 				that.dataEdit[key] = that.modalOptions.hasOwnProperty(key) ? that.modalOptions[key] : "";
 			}
 			that.dataEdit.shopId == ""?that.modalConfig.title = "新建机构":that.modalConfig.title = "编辑机构";
-			
+			that.dataEdit.userId == ""?that.userReadonlyFlag=false : that.userReadonlyFlag=true;
 			that.getShopData();
 			that.getlabelData();
 			that.shopTypeIdArr = Array.from(new Set(that.dataEdit.shopTypeId.split(",").map(Number)));
@@ -273,6 +286,8 @@ import load from '../plugin/load.vue';
 			that.dataEdit.shopTypeId = that.shopTypeIdArr.toString();
 			that.dataEdit.shopTypeName = that.shopTypeNameArr.toString();
 			that.dataEdit.labelId = that.labelIdArr.toString();
+			that.dataEdit.logoUrl = '';
+			that.dataEdit.businessLicenseUrl = '';
 			that.getParentTypeId();
 			// return;
 			util.ajax({
@@ -289,13 +304,13 @@ import load from '../plugin/load.vue';
 						},1000)
 					}else{
 						that.submitStatus = true;
-						that.loadTxt = "保存失败";
+						that.loadTxt = data.message;
 						that.setTimeout();
 					}
 				},
 				error:function(res){
 					that.submitStatus = true;
-					that.loadTxt = "保存失败";
+					that.loadTxt = data.responseJSON.message;
 					that.setTimeout();
 				},
 				complete:function(){
@@ -422,9 +437,16 @@ import load from '../plugin/load.vue';
 					cityId:id
 				},
 				success:function(data){
-					that.qData = data.data;
-					that.dataEdit.districtId = that.qData[0].id;
-					that.getQplace(that.dataEdit.districtId);
+					console.log(data)
+					if(data.code != 500){
+						that.qData = data.data;
+						that.dataEdit.districtId = that.qData[0].id;
+						that.getQplace(that.dataEdit.districtId);
+					}else{
+						that.qData = [];
+						that.dataEdit.districtId = null;
+						that.dataEdit.districtName = "";
+					}
 				}
 			});
 			for(var i=0; i<that.cData.length; i++){
@@ -440,6 +462,38 @@ import load from '../plugin/load.vue';
 					that.dataEdit.districtName = that.qData[i].districtName;
 				}
 			}
+		},
+		bgChange(index){
+			this.picFlag == null ? this.picFlag = index : this.picFlag = null;
+		},
+		showPic(e,str){
+			var that = this,type = str=='logoUrl'?14:13;
+			var file = e.target.files[0];
+			var reader = new FileReader();
+			util.ajax({
+				url:API_HOST+"/manager/upload/init",
+				data:{
+					type:type,
+					fileSuffix:"jpg",
+					uploadType:"PUT"
+				},
+				success:function(data){
+					str=='logoUrl' ? that.dataEdit.logoUploadId = data.data.uploadId : that.dataEdit.licenseUploadId = data.data.uploadId;
+					console.log(data.data.uploadId)
+					var xhr = new XMLHttpRequest();
+					xhr.open("PUT", data.data.uploadUrl, true);
+					xhr.setRequestHeader("x-amz-acl","public-read");
+					xhr.send(file);
+					xhr.onreadystatechange = function(){
+						if(xhr.status == 200 && xhr.readyState == 4){
+							reader.readAsDataURL(file);                    
+							reader.onload = function(e) {
+								that.dataEdit[str] = this.result;
+							};
+						}
+					}
+				}
+			});
 		},
 		setTimeout(){
 			var that = this;
@@ -547,9 +601,45 @@ import load from '../plugin/load.vue';
 				.img_con{
 					width: 50px;
 					height: 50px;
+					position: relative;
+					.unload_img{
+						width: 100%;
+						position: absolute;
+						left: 0;
+						top: 0;
+						bottom: 0;
+						right: 0;
+						opacity: 0;
+						z-index: 500;
+						cursor: pointer;
+					}
 					img{
+						width: 100%;
+						height: 100%;
+						z-index: 498;
+					}
+					div.load_tip{
+						position: absolute;
 						width: 50px;
 						height: 50px;
+						line-height: 45px;
+						text-align: center;
+						font-size: 50px;
+						left: 0;
+						top: 0;
+						bottom: 0;
+						right: 0;
+						color: #96a0bd;
+						z-index: 499;
+						background: rgba(0,0,0,.1);
+						&.cur1{
+							display: none;
+						}
+						&.cur{
+							display: block;
+							background: rgba(0,0,0,.3);
+							color: #fff;
+						}
 					}
 				}
 				

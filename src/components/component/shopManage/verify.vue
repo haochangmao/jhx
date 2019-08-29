@@ -30,10 +30,10 @@
 						<div>详细地址:</div><div>{{dataVerify.address}}</div>
 					</li>
 					<li>
-						<div>机构logo:</div><div><img :src="dataVerify.logoUrl" alt=""></div>
+						<div>机构logo:</div><div><img :src="dataVerify.logoUrl" @click="viewPic(dataVerify.logoUrl)"></div>
 					</li>
 					<li>
-						<div>营业执照:</div><div><img :src="dataVerify.businessLicenseUrl" alt=""></div>
+						<div>营业执照:</div><div><img :src="dataVerify.businessLicenseUrl" @click="viewPic(dataVerify.businessLicenseUrl)"></div>
 					</li>
 				</ul>
 				<ul class="l">
@@ -57,6 +57,10 @@
 					</li>
 				</ul>
 			</div>	
+			<div class="play_video" v-show="picShow">
+				<span class="close_video btn_s" @click="viewPic()">关闭图片</span>
+				<img :src="picUrl" height="480" alt="">
+			</div>
 			</div>
 	        <div class="model_btnBox" v-show="modalConfig.btnSubmitText!='' && modalConfig.btnCancelText!=''">
 	          <div>
@@ -105,31 +109,35 @@ import load from '../plugin/load.vue';
 				btnCancelText:"取消"
 			},
 			submitData:{
-				shopId:"",
+				auditId:"",
 				auditStatus:"",
 				auditMessage:""
 			},
 			submitStatus:false,
-			loadTxt:""
+			loadTxt:"",
+			picUrl:"",
+			picShow:false
 		}
     },
 	watch:{
 		modalOptions(){
 			var that = this;
 			that.dataVerify = that.modalOptions;
-			that.submitData.shopId = that.modalOptions.shopId;
+			that.submitData.auditId = that.modalOptions.auditId;
 			that.submitData.auditMessage = that.modalOptions.auditMessage;
 			console.log(that.dataVerify)
 		}
 	},
     methods: {
 		closeModel: function () {
+			this.viewPic();
 		  this.show = false;
 		},
 		showModel: function () {
 		  this.show = true;
 		},
 		confirmCancel: function () {
+			this.viewPic();
 			this.show = false;
 		},
 		pass: function (flag) {
@@ -146,7 +154,7 @@ import load from '../plugin/load.vue';
 			flag? that.submitData.auditStatus = 1 : that.submitData.auditStatus = 3;
 			console.log(that.submitData)
 			util.ajax({
-				url:API_HOST+"/manager/shop/verify",
+				url:API_HOST+"/manager/shopAudit/verify",
 				data:that.submitData,
 				success:function(data){
 					if(data.code == 200){
@@ -156,6 +164,7 @@ import load from '../plugin/load.vue';
 							that.$parent.getData();
 							that.submitStatus = false;
 							that.show = false;
+							that.viewPic();
 						},1000)
 					}else{
 						that.submitStatus = true;
@@ -171,6 +180,15 @@ import load from '../plugin/load.vue';
 				complete:function(){
 				}
 			});
+		},
+		viewPic(url){
+			if(url){
+				this.picUrl = url;
+				this.picShow = true;
+			}else{
+				this.picUrl = "";
+				this.picShow = false;
+			}
 		},
 		setTimeout(){
 			var that = this;
@@ -190,6 +208,25 @@ import load from '../plugin/load.vue';
 		 left: 0;
 		 right: 0;
 		overflow: auto;
+		.play_video{
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			background: rgba(0,0,0,.3);
+			.close_video{
+				position: absolute;
+				top: 10px;
+				right: 10px;
+			}
+			video,img{
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);  
+			}
+		}
 	}
 	
 	.verifty{
@@ -228,5 +265,6 @@ import load from '../plugin/load.vue';
 				height: 50px;
 			}
 		}
+		
 	}
 </style>

@@ -29,7 +29,8 @@ let util = {
 	ajax : function (opt){
 		$.ajax({
 			url: opt.url,
-			type: "GET",
+			headers:opt.header,
+			type: opt.type || "GET",
 			timeout : "50000",
 			async: true,
 			cache: true,//要求为Boolean类型的参数，默认为true（当dataType为Script时，默认为false），设置false将不会从浏览器缓存中加载请求信息。
@@ -48,6 +49,11 @@ let util = {
 			error(res){
 				console.log('error',res)
 				opt.error && opt.error(res);
+			},
+			statusCode:{
+				200:function(){
+					opt.status
+				}
 			}
 		});
 		function codeMap (res){
@@ -58,7 +64,10 @@ let util = {
 			        break;
 			    case "200":
 					opt.success && opt.success(res);
-			        break;                
+			        break;  
+				case "500":
+					opt.success && opt.success(res);
+					break; 
 			    default:
 			        break;
 			}

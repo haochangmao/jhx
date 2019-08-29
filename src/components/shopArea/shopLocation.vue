@@ -1,6 +1,26 @@
 <template>
-	<div class="jhx location_map">
+	<div class="jhx location_map" v-show="show">
 		<div id="container" class="map" tabindex="0"></div>
+		<div class="search">
+			<div class="form_item">
+				<label class="item_label">店铺状态</label>
+				<div class="item_cont select1">
+					<select name="" id="" class="" v-model="searchData.shopStatus" @change="getShopLocation">
+						<option value="1">上线(已认领)</option>
+						<option value="-1">下线</option>
+					</select>
+				</div>
+			</div>
+			<div class="form_item">
+				<label class="item_label">机构类型</label>
+				<div class="item_cont select1">
+					<select name="" id="" class="" v-model="searchData.parentTypeId" @change="getShopLocation">
+						<option value="">全部</option>
+						<option  v-for="i in shopTypeFData" :value="i.typeId">{{i.typeName}}</option>
+					</select>
+				</div>
+			</div>
+		</div>
 		<div class="input-card" v-show="false">
 			<h4>聚合点效果切换</h4>
 			<div class="input-item">
@@ -9,20 +29,33 @@
 				<input type="button" class="btn" value="完全自定义" id="add2" onclick='addCluster(2)'/>
 			</div>
 		</div>
+		<load :loadTxt="loadTxt" v-show="!statusFlag" class="statusFlag"></load>
 	</div>
 </template>
 
 <script>
-	
+	import util from '../../js/common/util';
+	import load from '../component/plugin/load.vue';
 	export default {
 		data(){
 			return{
+				show:false,
 				points:[],
 				cluster:null,
 				markers:[],
 				map:null,
-				count:""
+				count:"",
+				searchData:{
+					shopStatus:1,
+					parentTypeId:""
+				},
+				loadTxt:"",
+				statusFlag:true,
+				shopTypeFData:{}
 			}
+		},
+		components: {
+			load:load
 		},
 		methods:{
 			_renderClusterMarker(context){
@@ -95,10 +128,10 @@
 					center: [116.3972282409668, 39.90960456049752],
 					zoom: 9
 				});
-				for (var i = 0; i < this.points.length; i += 1) {
+				for (var i = 0; i < that.points.length; i += 1) {
 					that.markers.push(new AMap.Marker({
 						position: this.points[i]['lnglat'],
-						content: '<div style="background-color: '+ this.points[i]['color'] +'; height: 24px; width: 24px; border: 1px solid red; border-radius: 12px; ">123</div>',
+						content: '<div style="background-color:red; height: 24px; width: 24px; border: 1px solid red; border-radius: 12px; ">'+this.points[i].shopName+'</div>',
 						offset: new AMap.Pixel(-15, -15)
 					}))
 				}
@@ -107,25 +140,78 @@
 			},
 			getShopLocation(){
 				var that = this;
-				that.points = [{"lnglat":["116.47679","39.98947"],"color":"yellow"},{"lnglat":["116.28918","39.96134"],"color":"blue"},{"lnglat":["116.537926","40.087437"],"color":"green"}];
-				that.setMap();
+				that.statusFlag = false;
+				that.loadTxt = "加载中";
+				that.points = [];
+				that.markers = [];
+				util.ajax({
+					url:API_HOST+"/manager/shopmap/query",
+					data:that.searchData,
+					success:function(data){
+						if(data.code!=200){
+							that.loadTxt = "获取机构点位信息失败";
+							return;
+						}
+						that.points = data.data;
+						that.setTimeout();
+						that.setMap();
+					},
+					error:function(){
+						that.dataFlag = false;
+						that.loadTxt = "获取机构点位信息失败";
+						that.setTimeout();
+					}
+				})
+			},
+			searchDataFn(){
+				that.getShopLocation();
+			},
+			//获取机构类型
+			getShopFData(){
+				var that = this;
+				util.ajax({
+					url:API_HOST+"/manager/category/query",
+					data:{
+						type:1
+					},
+					success:function(data){
+						that.shopTypeFData = data.data;
+					}
+				})
+			},
+			setTimeout(){
+				var that = this;
+				setTimeout(function(){
+					that.statusFlag = true;
+				},1000)
 			}
 		},
 		mounted() {
 			var that = this;
-			that.getShopLocation();
+			setTimeout(()=>{
+				that.show = true;
+				that.getShopLocation();
+				that.getShopFData();
+			},500)
 		}
 	}
 	
 </script>
 
 <style lang="scss" scoped>
+	
 	#container {
             height: 100%;
             width: 100%;
         }
 	.location_map{
-			
+		.search{
+			position: fixed;
+			.form_item{
+				float: none;
+				margin: 5px 0 0 10px;
+			}
+		}
         .input-card {
             width: 280px;
 			h4{
@@ -142,5 +228,13 @@
         .input-card .btn:last-child {
             margin-right: 0;
         }
+		.statusFlag{
+				position: absolute;
+				top: 0;
+				bottom:0;
+				left: 0;
+				right: 0;
+				z-index: 9999;
+			}
 	}
 </style>

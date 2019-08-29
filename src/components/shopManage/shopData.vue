@@ -18,7 +18,17 @@
 			<div class="form_item">
 				<label class="item_label">浏览数</label>
 				<div class="item_cont select1">
-					<select name="" id="" class="" v-model="searchData.playSortOrder">
+					<select name="" id="" class="" v-model="searchData.playSortOrder" @change="charge('playSortOrder')">
+						<option value="">请选择</option>
+						<option value="1">升序</option>
+						<option value="0">降序</option>
+					</select>
+				</div>
+			</div>
+			<div class="form_item">
+				<label class="item_label">咨询数</label>
+				<div class="item_cont select1">
+					<select name="" id="" class="" v-model="searchData.callPhoneSortOrder" @change="charge('callPhoneSortOrder')">
 						<option value="">请选择</option>
 						<option value="1">升序</option>
 						<option value="0">降序</option>
@@ -28,7 +38,7 @@
 			<div class="form_item">
 				<label class="item_label">关注数</label>
 				<div class="item_cont select1">
-					<select name="" id="" class="" v-model="searchData.concernSortOrder">
+					<select name="" id="" class="" v-model="searchData.concernSortOrder" @change="charge('concernSortOrder')">
 						<option value="">请选择</option>
 						<option value="1">升序</option>
 						<option value="0">降序</option>
@@ -38,9 +48,8 @@
 			<div class="form_item">
 				<label class="item_label">预约数</label>
 				<div class="item_cont select1">
-					<select name="" id="" class="" v-model="searchData.appointSortOrder">
+					<select name="" id="" class="" v-model="searchData.appointSortOrder" @change="charge('appointSortOrder')">
 						<option value="">请选择</option>
-						<option value="0">已到店</option>
 						<option value="1">升序</option>
 						<option value="0">降序</option>
 					</select>
@@ -49,7 +58,7 @@
 			<div class="form_item">
 				<label class="item_label">分享数</label>
 				<div class="item_cont select1">
-					<select name="" id="" class="" v-model="searchData.shareSortOrder">
+					<select name="" id="" class="" v-model="searchData.shareSortOrder" @change="charge('shareSortOrder')">
 						<option value="">请选择</option>
 						<option value="1">升序</option>
 						<option value="0">降序</option>
@@ -71,6 +80,7 @@
 						<th>机构ID</th>
 						<th>机构名称</th>
 						<th>浏览数</th>
+						<th>咨询数</th>
 						<th>关注数</th>
 						<th>预约数</th>
 						<th>分享数</th>
@@ -82,10 +92,11 @@
 						<td>&nbsp;{{i.shopId}}</td>
 						<td>{{i.shopName}}</td>
 						<td>{{i.playNumber}}</td>
+						<td>{{i.callPhoneNumber}}</td>
 						<td>{{i.concernNumber}}</td>
 						<td>{{i.appointNumber}}</td>
 						<td>{{i.shareNumber}}</td>
-						<td class="opration"><span @click="adjust(i)">调整</span>&nbsp;</td>
+						<td class="opration"><span @click="false && adjust(i)" class="grey">调整</span>&nbsp;</td>
 					</tr>
 			</table>
 		</div>
@@ -110,10 +121,11 @@ export default {
 			searchData:{
 				shopId:"",
 				shopName:"",
-				playSortOrder:null,
-				concernSortOrder:null,
-				appointSortOrder:null,
-				shareSortOrder:null,
+				playSortOrder:'',
+				callPhoneSortOrder:'',
+				concernSortOrder:'',
+				appointSortOrder:'',
+				shareSortOrder:'',
 				page:"1"
 			},
 			pageArr:{totalPage:"",currentPage:"1"},
@@ -138,10 +150,11 @@ export default {
 		reset(){
 			this.searchData.shopId = "";
 			this.searchData.shopName = "";
-			this.searchData.playSortOrder = null;
-			this.searchData.concernSortOrder = null;
-			this.searchData.appointSortOrder = null;
-			this.searchData.shareSortOrder = null;
+			this.searchData.playSortOrder = "";
+			this.searchData.concernSortOrder = "";
+			this.searchData.appointSortOrder = "";
+			this.searchData.shareSortOrder = "";
+			this.searchData.callPhoneSortOrder = "";
 		},
         serach() {
 			this.searchData.page = "1";
@@ -188,6 +201,14 @@ export default {
 		adjust(data){
 			this.dataAdjustData = data;
 			this.$refs.dataAdjust.showModel();
+		},
+		charge(str){
+			var arr = ["playSortOrder","callPhoneSortOrder","concernSortOrder","appointSortOrder","shareSortOrder"];
+			for(var i=0; i<arr.length; i++){
+				if(arr.indexOf(str) != i){
+					this.searchData[arr[i]] = '';
+				}
+			}
 		}
     },
     computed:{

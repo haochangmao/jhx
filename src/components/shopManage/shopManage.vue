@@ -142,7 +142,7 @@
 						<td>{{i.auditStatus|auditStatus}}</td>
 						<td>{{i.updateTime}}</td>
 						<td>{{i.shopStatus|shopStatus}}</td>
-						<td class="opration"><span @click="viewModel(i)">查看</span>&nbsp;<span @click="editModel(i)">编辑</span>&nbsp;</td>
+						<td class="opration"><span @click="viewModel(i)">查看</span>&nbsp;<span @click="editModel(i)">编辑</span>&nbsp;<br/><span @click="renovation(i)">装修</span>&nbsp;<span @click="i.userId!='' && udno(i)" :class="i.userId==''?'grey':''">解绑</span>&nbsp;</td>
 					</tr>
 					<!-- <tr>
 						<td colspan="15" class="clear">
@@ -160,9 +160,11 @@
 			</table>
 		</div>
 		<div class="page_con"><lepage :pageArr="pageArr" @childProp="childProp" class="clear"></lepage></div>
+		<load :loadTxt="loadTxt" v-show="!undoFlag" class="undo"></load>
     </div>
 	<busDetail :modal-options="busDetailOptions" ref="busDetail" @openEdit="openEdit"></busDetail>
 	<busEdit :modal-options="busEditOptions" ref="busEdit"></busEdit>
+	<renovationShop :modal-options="renovationShopOptions" ref="renovationShop"></renovationShop>
 </div>
 </template> 
 
@@ -173,12 +175,14 @@ import Datepicker from 'vue-datepicker-local';
 import Page from '../component/plugin/page.vue';
 import busDetail from '../component/shopManage/busDetail.vue';
 import busEdit from '../component/shopManage/busEdit.vue';
+import renovationShop from '../component/shopManage/renovationShop.vue';
 import load from '../component/plugin/load.vue';
 export default {
     data () {
         return {
 			data:{},
 			dataFlag:false,
+			undoFlag:true,
 			searchData:{
 				shopId:"",
 				parentTypeId:"",
@@ -199,6 +203,7 @@ export default {
 			pageArr:{totalPage:"",currentPage:"1"},
 			busDetailOptions: {},
 			busEditOptions:{},
+			renovationShopOptions:"",
 			shopTypeFData:{},
 			quyuData:{},
 			loadTxt:""
@@ -209,6 +214,7 @@ export default {
 		lepage:Page,
 		busDetail:busDetail,
 		busEdit:busEdit,
+		renovationShop:renovationShop,
 		load:load
 	},
     created() {
@@ -229,6 +235,10 @@ export default {
 			var that = this;
 			that.busEditOptions = data;
 			that.$refs.busEdit.showModel();
+		},
+		renovation(data){
+			this.renovationShopOptions = data.shopId;
+			this.$refs.renovationShop.showModel();
 		},
 		build(){
 			var that = this;
@@ -284,7 +294,7 @@ export default {
 				success:function(data){
 					if(data.code!=200){
 						that.dataFlag = false;
-						that.loadTxt = "加载失败";
+						that.loadTxt = data.message;
 						return;
 					}
 					that.data = data.data;
@@ -298,7 +308,39 @@ export default {
 				},
 				error:function(){
 					that.dataFlag = false;
-					that.loadTxt = "加载失败";
+					that.loadTxt = data.responseJSON.message;
+				}
+			})
+		},
+		udno(data){
+			var that = this;
+			if(data.shopId==''||data.userId=='')return;
+			util.ajax({
+				url:API_HOST+"/manager/shop/undo",
+				data:{
+					shopId:data.shopId,
+					userId:data.userId
+				},
+				success:function(data){
+					if(data.code!=200){
+						that.undoFlag = false;
+						that.loadTxt = data.message;
+					}else{
+						that.undoFlag = false;
+						that.loadTxt = "解绑成功";
+						that.getData();
+					}
+					console.log(that.deleteFlag)
+					setTimeout(function(){
+						that.undoFlag = true;
+					},1000);
+				},
+				error:function(data){
+					that.undoFlag = false;
+					that.loadTxt = data.responseJSON.message;
+					setTimeout(function(){
+						that.undoFlag = true;
+					},1000);
 				}
 			})
 		},
@@ -340,8 +382,18 @@ export default {
 </script>
 <style lang="scss" scoped>
 .shopManage{
-	
+	.opration{
+		line-height: 17px;
+	}
 }
+.undo{
+		position: fixed;
+		top: 0;
+		bottom:0;
+		left: 0;
+		right: 0;
+		z-index: 9999;
+	}
 </style>
 
 

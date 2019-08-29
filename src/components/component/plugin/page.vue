@@ -9,7 +9,7 @@
 					<span class="jump" v-for="num in indexs" :class="{bgprimary:pageArr.currentPage==num}" @click="jumpPage(num)">{{num}}</span> 
 					<span class="ellipsis"  v-show="efont&&pageArr.currentPage<pageArr.totalPage-4">...</span> 
 			 
-					<span class="jump" @click="pageArr.currentPage++">下一页</span> 
+					<span class="jump" @click="pageArr.currentPage++" v-show="pageArr.currentPage<pageArr.totalPage">下一页</span> 
 					<span v-show="pageArr.currentPage<pageArr.totalPage-1" class="jump" @click="jumpPage(pageArr.totalPage)">{{pageArr.totalPage}}</span> 
 			 
 					<span class="jumppoint">跳转到：</span> 
@@ -45,7 +45,7 @@ computed:{
 		var left = 1, 
 		right = this.pageArr.totalPage, 
 		ar = []; 
-		if (this.pageArr.totalPage >= 7) { 
+		if (this.pageArr.totalPage > 7) { 
 			if (this.pageArr.currentPage > 5 && this.pageArr.currentPage < this.pageArr.totalPage - 4) { 
 				left = Number(this.pageArr.currentPage) - 3; 
 				right = Number(this.pageArr.currentPage) + 3; 
@@ -58,7 +58,23 @@ computed:{
 					left = this.pageArr.totalPage - 6; 
 				} 
 			} 
-		} 
+		} else if(this.pageArr.totalPage == 7){
+			if (this.pageArr.currentPage <= 5) { 
+				left = 1; 
+				right = 7; 
+			} else { 
+				right = this.pageArr.totalPage; 
+				left = this.pageArr.totalPage - 5; 
+			} 
+		} else if(this.pageArr.totalPage == 6){
+			if (this.pageArr.currentPage <= 5) { 
+				left = 1; 
+				right = 6; 
+			} else { 
+				right = this.pageArr.totalPage; 
+				left = this.pageArr.totalPage - 4; 
+			} 
+		}
 		while (left <= right) { 
 			ar.push(left); 
 			left++; 
