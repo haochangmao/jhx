@@ -4,7 +4,7 @@
   "description": "聚好选控制台",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server --config webpack.dev.js --host 10.58.112.51",
+    "dev": "webpack-dev-server --config webpack.dev.js --host 10.58.113.102",
     "test": "NODE_ENV=test webpack --config webpack.prod.js  --progress --hide-modules",
     "build": "NODE_ENV=prod webpack --config webpack.prod.js  --progress --hide-modules"
   },
@@ -42,6 +42,7 @@
     "html-webpack-plugin": "^2.30.1",
     "node-sass": "^4.12.0",
     "sass-loader": "^6.0.6",
+    "sortablejs": "^1.10.0-rc3",
     "vue": "^2.5.13",
     "vue-loader": "^15.7.0",
     "vue-router": "^3.0.6",

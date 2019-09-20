@@ -3,7 +3,6 @@ const path = require('path');
 const webpack = require('webpack');
 const common = require('./webpack.config');
 
-console.log(1234,process.env.NODE_ENV);
 let baseUrl ;
 switch (process.env.NODE_ENV) {
   case 'test':
@@ -19,9 +18,9 @@ switch (process.env.NODE_ENV) {
 
 
 module.exports = merge(common, {
-	devtool: 'source-map',
+	// devtool: 'source-map',
 	output: {
-		path: path.resolve(__dirname, 'dist'),
+		path: path.resolve(__dirname, 'jhx'),
 		filename: 'js/[name].js'
 	},
 	plugins: [
